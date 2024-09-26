@@ -1,20 +1,39 @@
 {
   "name": "instabuilds-sdk",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.3",
+  "description": "A TypeScript SDK for interacting with AI services such as ChatGPT, Claude, DALL-E, and more.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "build": "tsc && cp -R ./src/types ./dist/types",
+    "prepare": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "AI",
+    "SDK",
+    "ChatGPT",
+    "DALL-E",
+    "ElevenLabs",
+    "Claude",
+    "TypeScript"
+  ],
+  "author": "Your Name",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KelvinCelso/instabuilds-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KelvinCelso/instabuilds-sdk.git/issues"
+  },
+  "homepage": "https://github.com/KelvinCelso/instabuilds-sdk.git#readme",
   "dependencies": {
     "@types/node": "^22.7.2",
     "axios": "^1.7.7",
     "typescript": "^5.6.2"
+  },
+  "devDependencies": {
+    "@types/axios": "^1.7.7"
   }
 }

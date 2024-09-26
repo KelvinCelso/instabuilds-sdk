@@ -1,4 +1,19 @@
-src
+# Ignore node_modules (npm does this by default, but good practice)
+node_modules/
+
+# Ignore TypeScript source files (you only want to ship compiled code)
+src/**/*.ts
+!src/**/*.d.ts  # Keep type declaration files
+
+# Ignore build tools and lock files
+.bun.lockb
+code_context.txt
+get_code_context.sh
+
+# Ignore TypeScript config and build configs
 tsconfig.json
 
-ns1.vercel-dns.com
+# Ignore other unnecessary files
+.DS_Store
+*.log
+dist/  # Uncomment this if you’re using a precompiled package and publish only src
