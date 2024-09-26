@@ -1,0 +1,305 @@
+// File: src/errors/index.ts
+// src/errors/index.ts
+
+export class SDKError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'SDKError';
+  }
+}
+
+export class APIError extends SDKError {
+  constructor(message: string, public statusCode: number) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
+
+export class NetworkError extends SDKError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NetworkError';
+  }
+}
+// File: src/index.d.ts
+// File: index.d.ts in your SDK package
+
+declare module 'instabuilds-sdk' {
+  export interface SDKConfig {
+    apiKey: string;
+    baseUrl?: string;
+  }
+
+  export interface ChatGPTInput {
+    messages: Array<{ role: string; content: string }>;
+    options?: any;
+  }
+
+  export interface ChatGPTResponse {
+    result: string;
+    // Add other properties as needed
+  }
+
+  class ChatGPT {
+    constructor(config: SDKConfig);
+    completion(input: ChatGPTInput): Promise<ChatGPTResponse>;
+    ask(question: string, options?: any): Promise<ChatGPTResponse>;
+  }
+
+  export default class MyAPISDK {
+    constructor(config: SDKConfig);
+    chatgpt: ChatGPT;
+    // Add other services here
+  }
+}
+// File: src/index.ts
+import ChatGPT from './services/chatgpt';
+// import Claude from './services/claude';
+// import DALLE from './services/dalle';
+// import DeepL from './services/deepl';
+// import ElevenLabs from './services/elevenlabs';
+// import Gemini from './services/gemini';
+import { SDKConfig } from './types/config';
+
+/**
+ * The main class for interacting with various AI services.
+ * @class
+ */
+class MyAPISDK {
+  /** ChatGPT service instance */
+  chatgpt: ChatGPT;
+  // /** Claude service instance */
+  // claude: Claude;
+  // /** DALL-E service instance */
+  // dalle: DALLE;
+  // /** DeepL service instance */
+  // deepl: DeepL;
+  // /** ElevenLabs service instance */
+  // elevenlabs: ElevenLabs;
+  // /** Gemini service instance */
+  // gemini: Gemini;
+
+  /**
+   * Creates an instance of MyAPISDK.
+   * @param {SDKConfig} config - The configuration object for the SDK.
+   */
+  constructor(config: SDKConfig) {
+    this.chatgpt = new ChatGPT(config);
+    // this.claude = new Claude(config);
+    // this.dalle = new DALLE(config);
+    // this.deepl = new DeepL(config);
+    // this.elevenlabs = new ElevenLabs(config);
+    // this.gemini = new Gemini(config);
+  }
+}
+
+export default MyAPISDK;
+
+export { ChatGPT, MyAPISDK }
+// File: src/services/chatgpt.ts
+import axios from 'axios';
+import { AxiosInstance } from 'axios';
+
+import { SDKConfig } from '../types/config';
+import { ChatGPTInput } from '../types/input-types';
+import { ChatGPTResponse } from '../types/api-responses';
+
+/**
+ * ChatGPT service class for interacting with the ChatGPT API.
+ * @class
+ */
+class ChatGPT {
+  /**
+   * The Axios instance for making HTTP requests.
+   * @private
+   */
+  private client: AxiosInstance;
+
+  /**
+   * Creates an instance of ChatGPT service.
+   * @param {SDKConfig} config - The configuration object for the service.
+   */
+  constructor(config: SDKConfig) {
+    this.client = axios.create({
+      baseURL: config.baseUrl || 'https://api.yourdomain.com',
+      headers: {
+        'Authorization': `Bearer ${config.apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  /**
+   * Sends a completion request to the ChatGPT API.
+   * @param {ChatGPTInput} input - The input for the completion request.
+   * @returns {Promise<ChatGPTResponse>} A promise that resolves to the ChatGPT API response.
+   * @throws {Error} If there's an error with the API request.
+   */
+  async completion(input: ChatGPTInput): Promise<ChatGPTResponse> {
+    try {
+      const response = await this.client.post<ChatGPTResponse>('/api/v1/gpt/completion', input);
+      return response.data;
+    } catch (error) {
+      throw new Error(`ChatGPT API Error: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Sends a single question to the ChatGPT API.
+   * @param {string} question - The question to ask.
+   * @param {ChatGPTInput['options']} [options] - Optional parameters for the request.
+   * @returns {Promise<ChatGPTResponse>} A promise that resolves to the ChatGPT API response.
+   * @throws {Error} If there's an error with the API request.
+   */
+  async ask(question: string, options?: ChatGPTInput['options']): Promise<ChatGPTResponse> {
+    return this.completion({ messages: [{ role: 'user', content: question }], options });
+  }
+}
+
+export default ChatGPT;
+// File: src/services/claude.ts
+
+// File: src/services/dalle.ts
+
+// File: src/services/deepl.ts
+
+// File: src/services/elevenlabs.ts
+
+// File: src/services/gemini.ts
+
+// File: src/types/api-responses.d.ts
+// src/types/api-responses.ts
+
+/**
+ * Represents the response from the ChatGPT API.
+ * @interface
+ */
+export interface ChatGPTResponse {
+  /** The generated text response */
+  result: string;
+  /** Usage statistics for the API call */
+  usage?: {
+    /** Number of tokens in the prompt */
+    prompt_tokens: number;
+    /** Number of tokens in the completion */
+    completion_tokens: number;
+    /** Total number of tokens used */
+    total_tokens: number;
+  };
+}
+
+export interface ClaudeResponse {
+  result: string;
+  // Add any Claude-specific fields
+}
+
+export interface DALLEResponse {
+  result: string; // URL of the generated image
+}
+
+export interface DeepLResponse {
+  translation: string;
+  source_lang: string;
+  target_lang: string;
+}
+
+export interface ElevenLabsResponse {
+  audio_url: string;
+  // Add any other relevant fields
+}
+
+export interface GeminiResponse {
+  result: string;
+  // Add any Gemini-specific fields
+}
+// File: src/types/config.d.ts
+/**
+ * Configuration options for the SDK.
+ * @interface
+ */
+export interface SDKConfig {
+  /** API key for authentication */
+  apiKey: string;
+  /** Base URL for API requests */
+  baseUrl?: string;
+  /** Timeout for API requests in milliseconds */
+  timeout?: number;
+  /** API version to use */
+  version?: string;
+}
+// File: src/types/input-types.d.ts
+// src/types/input-types.ts
+
+/**
+ * Represents the input for a ChatGPT API request.
+ * @interface
+ */
+export interface ChatGPTInput {
+  /** Array of message objects representing the conversation */
+  messages: Array<{
+    /** The role of the message sender */
+    role: 'user' | 'assistant' | 'system';
+    /** The content of the message */
+    content: string
+  }>;
+  /** Optional parameters for the API call */
+  options?: {
+    /** Controls randomness: 0.0 is deterministic, 1.0 is very random */
+    temperature?: number;
+    /** The maximum number of tokens to generate */
+    max_tokens?: number;
+    // Add other relevant options
+  };
+}
+
+
+export interface ClaudeInput {
+  prompt: string;
+  options?: {
+    // Claude-specific options
+  };
+}
+
+export interface DALLEInput {
+  prompt: string;
+  options?: {
+    size?: '256x256' | '512x512' | '1024x1024';
+    n?: number;
+  };
+}
+
+export interface DeepLInput {
+  text: string;
+  target_lang: string;
+  source_lang?: string;
+}
+
+export interface ElevenLabsInput {
+  text: string;
+  voice_id?: string;
+  options?: {
+    stability?: number;
+    similarity_boost?: number;
+  };
+}
+
+export interface GeminiInput {
+  prompt: string;
+  options?: {
+    // Gemini-specific options
+  };
+}
+// File: src/utils/type-guards.ts
+// src/utils/type-guards.ts
+
+import { ChatGPTResponse, ClaudeResponse /* ... */ } from '../types/api-responses';
+
+export function isChatGPTResponse(response: any): response is ChatGPTResponse {
+  return 'result' in response && typeof response.result === 'string';
+}
+
+// export function isClaudeResponse(response: any): response is ClaudeResponse {
+//   // Implement Claude-specific checks
+// }
+
+// ... implement other type guards
