@@ -2,8 +2,9 @@
   "name": "instabuilds-sdk",
   "version": "1.0.5",
   "description": "A TypeScript SDK for interacting with AI services such as ChatGPT, Claude, DALL-E, and more.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,7 +20,7 @@
     "Claude",
     "TypeScript"
   ],
-  "author": "Your Name",
+  "author": "Instabuilds",
   "license": "ISC",
   "repository": {
     "type": "git",

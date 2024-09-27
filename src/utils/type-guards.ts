@@ -1,6 +1,6 @@
 // src/utils/type-guards.ts
 
-import { ChatGPTResponse, ClaudeResponse /* ... */ } from '../types/api-responses';
+import { ChatGPTResponse, ClaudeResponse /* ... */ } from '../types/api-responses.js';
 
 export function isChatGPTResponse(response: any): response is ChatGPTResponse {
   return 'result' in response && typeof response.result === 'string';

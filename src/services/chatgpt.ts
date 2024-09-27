@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 
-import { SDKConfig } from '../types/config';
-import { ChatGPTInput } from '../types/input-types';
-import { ChatGPTResponse } from '../types/api-responses';
+import { SDKConfig } from '../types/config.js';
+import { ChatGPTInput } from '../types/input-types.js';
+import { ChatGPTResponse } from '../types/api-responses.js';
 
 /**
  * ChatGPT service class for interacting with the ChatGPT API.

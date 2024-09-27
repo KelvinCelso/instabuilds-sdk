@@ -1,12 +1,17 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'], // Main entry point of your SDK
+  entry: ['src/**/*.ts'], // This will include all TypeScript files in src and its subdirectories
   splitting: false,
   sourcemap: true,
   clean: true,
-  dts: true, // Generate TypeScript declaration files
-  format: ['cjs', 'esm'], // Output both CommonJS and ES module
-  outDir: 'dist', // Output directory
-  target: 'es2020', // Specify your target JavaScript version
+  dts: true,
+  format: ['cjs', 'esm'],
+  outDir: 'dist',
+  target: 'es2020',
+  outExtension({ format }) {
+    return {
+      js: `.${format}.js`,
+    }
+  },
 });

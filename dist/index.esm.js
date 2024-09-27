@@ -67,4 +67,4 @@ export {
   MyAPISDK,
   src_default as default
 };
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.esm.js.map

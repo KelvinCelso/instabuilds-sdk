@@ -4,8 +4,8 @@
 // import DeepL from './services/deepl';
 // import ElevenLabs from './services/elevenlabs';
 // import Gemini from './services/gemini';
-import ChatGPT from './services/chatgpt';
-import { SDKConfig } from './types/config';
+import ChatGPT from './services/chatgpt.js';
+import { SDKConfig } from './types/config.js';
 
 /**
  * The main class for interacting with various AI services.
