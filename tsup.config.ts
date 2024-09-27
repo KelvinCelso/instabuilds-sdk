@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/**/*.ts'], // This will include all TypeScript files in src and its subdirectories
+  entry: ['src/index.ts'], // This will include all TypeScript files in src and its subdirectories
   splitting: false,
   sourcemap: true,
   clean: true,
@@ -11,7 +11,7 @@ export default defineConfig({
   target: 'es2020',
   outExtension({ format }) {
     return {
-      js: `.${format}.js`,
+      js: format === 'cjs' ? '.cjs' : '.js',
     }
   },
 });

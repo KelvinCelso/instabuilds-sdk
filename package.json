@@ -32,8 +32,9 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "homepage": "https://github.com/KelvinCelso/instabuilds-sdk.git#readme",
@@ -43,5 +44,8 @@
     "tsup": "^8.3.0",
     "typescript": "^5.6.2"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {}
 }

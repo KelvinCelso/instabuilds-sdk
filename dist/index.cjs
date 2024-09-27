@@ -105,4 +105,4 @@ var src_default = MyAPISDK;
   ChatGPT,
   MyAPISDK
 });
-//# sourceMappingURL=index.cjs.js.map
+//# sourceMappingURL=index.cjs.map
