@@ -1,5 +1,6 @@
-import rrweb from 'rrweb';
+import * as rrweb from 'rrweb';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 interface SDKConfig {
   apiKey: string;
@@ -34,6 +35,7 @@ export class SessionRecorder {
   private flushInterval?: number;
   private metadata: SessionMetadata;
   private sessionInitialized: boolean = false;
+  private axiosInstance;
 
   constructor(config: SDKConfig) {
     this.sessionId = uuidv4();
@@ -49,6 +51,14 @@ export class SessionRecorder {
         sessionDuration: 0
       }
     };
+
+    this.axiosInstance = axios.create({
+      baseURL: this.config.backendUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': this.config.apiKey
+      }
+    });
   }
 
   private getDeviceInfo() {
@@ -85,20 +95,13 @@ export class SessionRecorder {
 
   private async initializeSession(): Promise<void> {
     try {
-      const response = await fetch(`${this.config.backendUrl}/api/session/init`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          apiKey: this.config.apiKey,
-          sessionId: this.sessionId,
-          metadata: this.metadata,
-          startTime: this.sessionStart
-        })
+      const response = await this.axiosInstance.post('/api/sessions/init', {
+        sessionId: this.sessionId,
+        metadata: this.metadata,
+        startTime: this.sessionStart
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error('Failed to initialize session');
       }
 
@@ -152,12 +155,10 @@ export class SessionRecorder {
   private async flush(isFinal: boolean): Promise<void> {
     if (this.rrwebEvents.length === 0) return;
 
-    // Update session duration
     this.metadata.metrics.sessionDuration =
       Math.floor((Date.now() - this.sessionStart) / 1000);
 
     const payload = {
-      apiKey: this.config.apiKey,
       sessionId: this.sessionId,
       metadata: this.metadata,
       events: [...this.rrwebEvents],
@@ -170,27 +171,22 @@ export class SessionRecorder {
     try {
       if (isFinal) {
         // For final flush, use sendBeacon to ensure delivery
+        const blob = new Blob([JSON.stringify(payload)], {
+          type: 'application/json',
+        });
         navigator.sendBeacon(
-          `${this.config.backendUrl}/api/session/events`,
-          JSON.stringify(payload)
+          `${this.config.backendUrl}/api/sessions/events`,
+          blob
         );
       } else {
-        // Regular flush using fetch
-        const response = await fetch(`${this.config.backendUrl}/api/session/events`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
+        const response = await this.axiosInstance.post('/api/sessions/events', payload);
 
-        if (!response.ok) {
+        if (response.status !== 200) {
           throw new Error('Failed to send events');
         }
       }
     } catch (error) {
       console.error('Failed to send session data:', error);
-      // Restore events if send failed
       this.rrwebEvents = [...eventsToSend, ...this.rrwebEvents];
     }
   }
