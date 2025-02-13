@@ -1,5 +1,5 @@
 {
-  "name": "instabuilds-sdk",
+  "name": "instabuilds",
   "version": "1.0.0",
   "description": "Session recording and user behavior tracking SDK for web applications",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/instabuilds-sdk"
+    "url": "https://github.com/KelvinCelso/instabuilds-sdk.git"
   },
   "files": [
     "dist",
